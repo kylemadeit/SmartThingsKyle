@@ -33,39 +33,39 @@ metadata {
 		fingerprint manufacturer: "DAWON_DNS", model: "PM-C150-ZB", deviceJoinName: "Dawon Outlet" // DAWON DNS In-Wall Outlet
 		fingerprint manufacturer: "DAWON_DNS", model: "PM-C250-ZB", deviceJoinName: "Dawon Outlet" // DAWON DNS In-Wall Outlet
 		fingerprint manufacturer: "DAWON_DNS", model: "PM-B440-ZB", deviceJoinName: "Dawon Outlet" // DAWON DNS Smart Plug
-    
-        fingerprint profileId: "0104", inClusters: "0000, 0004, 0005, 0006, 0702, 0B04", outClusters: "0019, 000A", model: "TS0121",  deviceJoinName: "Tuya Outlet" // Tuya Smart Plug
-        fingerprint profileId: "0104", inClusters: "0000, 0004, 0005, 0006, 0702, 0B04, E000, E001", outClusters: "0019, 000A", model: "TS011F",  deviceJoinName: "Tuya Outlet" //Tuya Smart Plug
-        fingerprint profileId: "0104", inClusters: "0003, 0004, 0005, 0006, 0702, 0B04, E000, E001", outClusters: "0019, 000A", model: "TS011F",  deviceJoinName: "Tuya Outlet" // Tuya Smart Plug
-    }
 
-    preferences {
-        input "powerPollingValue", "enum", title: "Power Polling Preference", options: ["0": "Automatic", "1": "Force Enable Power Polling", "2": "Force Disable Power Polling"], defaultValue: "0", required: false, displayDuringSetup: false
-    }
+		fingerprint profileId: "0104", inClusters: "0000, 0004, 0005, 0006, 0702, 0B04", outClusters: "0019, 000A", model: "TS0121",  deviceJoinName: "Tuya Outlet" // Tuya Smart Plug
+		fingerprint profileId: "0104", inClusters: "0000, 0004, 0005, 0006, 0702, 0B04, E000, E001", outClusters: "0019, 000A", model: "TS011F",  deviceJoinName: "Tuya Outlet" //Tuya Smart Plug
+		fingerprint profileId: "0104", inClusters: "0003, 0004, 0005, 0006, 0702, 0B04, E000, E001", outClusters: "0019, 000A", model: "TS011F",  deviceJoinName: "Tuya Outlet" // Tuya Smart Plug
+	}
 
-    tiles(scale: 2){
-        multiAttributeTile(name:"switch", type: "generic", width: 6, height: 4, canChangeIcon: true){
-            tileAttribute("device.switch", key: "PRIMARY_CONTROL") {
-                attributeState("on", label: '${name}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#00a0dc")
-                attributeState("off", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff")
-            }
-        }
-        valueTile("power", "device.power", decoration: "flat", width: 2, height: 2) {
-            state "default", label:'${currentValue} W'
-        }
-        valueTile("energy", "device.energy", decoration: "flat", width: 2, height: 2) {
-            state "default", label:'${currentValue} kWh'
-        }
-        standardTile("refresh", "device.power", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-            state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
-        }
-        standardTile("reset", "device.energy", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-            state "default", label:'reset kWh', action:"reset"
-        }
+	preferences {
+		input "powerPollingValue", "enum", title: "Power Polling Preference", options: ["0": "Automatic", "1": "Force Enable Power Polling", "2": "Force Disable Power Polling"], defaultValue: "0", required: false, displayDuringSetup: false
+	}
 
-        main(["switch"])
-        details(["switch","power","energy","refresh","reset"])
-    }
+	tiles(scale: 2){
+		multiAttributeTile(name:"switch", type: "generic", width: 6, height: 4, canChangeIcon: true){
+			tileAttribute("device.switch", key: "PRIMARY_CONTROL") {
+				attributeState("on", label: '${name}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#00a0dc")
+				attributeState("off", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff")
+			}
+		}
+		valueTile("power", "device.power", decoration: "flat", width: 2, height: 2) {
+			state "default", label:'${currentValue} W'
+		}
+		valueTile("energy", "device.energy", decoration: "flat", width: 2, height: 2) {
+			state "default", label:'${currentValue} kWh'
+		}
+		standardTile("refresh", "device.power", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
+			state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
+		}
+		standardTile("reset", "device.energy", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
+			state "default", label:'reset kWh', action:"reset"
+		}
+
+		main(["switch"])
+		details(["switch","power","energy","refresh","reset"])
+	}
 }
 
 def getATTRIBUTE_READING_INFO_SET() { 0x0000 }
@@ -162,16 +162,16 @@ def refresh() {
 }
 
 def installed() {
-    log.debug "installed()"
-    return configure()
+	log.debug "installed()"
+	return configure()
 }
 
 def updated() {
-    log.debug "updated()"
-    if (powerPolling != state.prevPowerPolling) {
-        state.prevPowerPolling = powerPolling
-        setPolling()
-    }
+	log.debug "updated()"
+	if (powerPolling != state.prevPowerPolling) {
+		state.prevPowerPolling = powerPolling
+		setPolling()
+	}
 }
 
 def configure() {
@@ -179,18 +179,18 @@ def configure() {
 	sendEvent(name: "checkInterval", value: 2 * 60 + 10 * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID])
 	log.debug "Configuring Reporting"
 
-    if ((device.getDataValue("manufacturer") == "Develco Products A/S") || (device.getDataValue("manufacturer") == "Aurora"))  {
-        device.updateDataValue("divisor", "1")
-    }
-    if ((device.getDataValue("manufacturer") == "SALUS") || (device.getDataValue("manufacturer") == "DAWON_DNS") || (device.getDataValue("model") == "TS0121") || (device.getDataValue("model") == "TS011F"))  {
-        device.updateDataValue("divisor", "1")
-    }
-    if ((device.getDataValue("manufacturer") == "LDS") || (device.getDataValue("manufacturer") == "REXENSE") || (device.getDataValue("manufacturer") == "frient A/S"))  {
-        device.updateDataValue("divisor", "1")
-    }
-    
-    setPolling()
-  
+	if ((device.getDataValue("manufacturer") == "Develco Products A/S") || (device.getDataValue("manufacturer") == "Aurora"))  {
+		device.updateDataValue("divisor", "1")
+	}
+	if ((device.getDataValue("manufacturer") == "SALUS") || (device.getDataValue("manufacturer") == "DAWON_DNS") || (device.getDataValue("model") == "TS0121") || (device.getDataValue("model") == "TS011F"))  {
+		device.updateDataValue("divisor", "1")
+	}
+	if ((device.getDataValue("manufacturer") == "LDS") || (device.getDataValue("manufacturer") == "REXENSE") || (device.getDataValue("manufacturer") == "frient A/S"))  {
+		device.updateDataValue("divisor", "1")
+	}
+
+	setPolling()
+
 	return refresh() +
 		zigbee.onOffConfig() +
 		zigbee.configureReporting(zigbee.SIMPLE_METERING_CLUSTER, ATTRIBUTE_READING_INFO_SET, DataType.UINT48, 1, 600, 1) +
@@ -208,27 +208,27 @@ private int getEnergyDiv() {
 }
 
 def powerRefresh() {
-    def cmds = zigbee.electricMeasurementPowerRefresh()
-    cmds.each{ sendHubCommand(new physicalgraph.device.HubAction(it)) }
+	def cmds = zigbee.electricMeasurementPowerRefresh()
+	cmds.each{ sendHubCommand(new physicalgraph.device.HubAction(it)) }
 }
 
 private setPolling() {
-    unschedule()
-    if (isPolling) {
-    	log.debug "setPolling() : Scheduling power polling every 1 minute."
-        runEvery1Minute(powerRefresh)
-    } else {
-        log.debug "setPolling() : Power polling disabled. Power will be reported only if the plug supports real time power reporting."
-    }
+	unschedule()
+	if (isPolling) {
+		log.debug "setPolling() : Scheduling power polling every 1 minute."
+		runEvery1Minute(powerRefresh)
+	} else {
+		log.debug "setPolling() : Power polling disabled. Power will be reported only if the plug supports real time power reporting."
+	}
 }
 
 private getIsPolling() {
-    def pollingTS011FAppVers = ["45", "44", "41", "40"]
-    def pushTS0121Devices = ["_TZ3000_8nkb7mof"]
-    def manufacturer = device.getDataValue("manufacturer")
-    def model = device.getDataValue("model")
-    def appVer = device.getDataValue("application")
-    return (powerPolling != "2") && ((model == "TS0121" && (pushTS0121Devices.findIndexOf{ it == manufacturer } == -1) ) || (model == "TS011F" && pollingTS011FAppVers.findIndexOf{ it == appVer } != -1) || powerPolling == "1")
+	def pollingTS011FAppVers = ["45", "44", "41", "40"]
+	def pushTS0121Devices = ["_TZ3000_8nkb7mof"]
+	def manufacturer = device.getDataValue("manufacturer")
+	def model = device.getDataValue("model")
+	def appVer = device.getDataValue("application")
+	return (powerPolling != "2") && ((model == "TS0121" && (pushTS0121Devices.findIndexOf{ it == manufacturer } == -1) ) || (model == "TS011F" && pollingTS011FAppVers.findIndexOf{ it == appVer } != -1) || powerPolling == "1")
 }
 
 private getPowerPolling() { powerPollingValue ?: "0" }
