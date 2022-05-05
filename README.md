@@ -1,1 +1,1 @@
-# SmartThingsKyle
+Custom DTHs for Smartthings
